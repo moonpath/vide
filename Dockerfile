@@ -13,6 +13,7 @@ RUN apt-get update && \
     cmake \
     ninja-build \
     unzip \
+    luarocks \
     nodejs \
     npm \
     python3 \
@@ -54,6 +55,7 @@ RUN curl -L https://github.com/jesseduffield/lazygit/releases/download/v0.40.2/l
     tar -xz -C /usr/local/bin lazygit
 
 RUN apt-get install -y \
+    fd-find \
     fzf \
     ripgrep
 
