@@ -70,11 +70,11 @@ RUN cat <<'EOF' > /usr/local/bin/docker-entrypoint && chmod +x /usr/local/bin/do
 set -x
 
 SOURCE_DIR="/workspace"
-TARGET_DIR="/root/workspace"
-
-mkdir -p $TARGET_DIR
 
 if [ -d $SOURCE_DIR ]; then
+    TARGET_DIR="/root/workspace"
+    mkdir -p $TARGET_DIR
+
     SOURCE_UID=$(stat -c '%u' $SOURCE_DIR)
     SOURCE_GID=$(stat -c '%g' $SOURCE_DIR)
     TARGET_UID=$(stat -c '%u' $TARGET_DIR)
@@ -85,14 +85,14 @@ if [ -d $SOURCE_DIR ]; then
         --map=$SOURCE_UID/$TARGET_UID:@$SOURCE_UID/@$TARGET_UID \
         --create-for-user=$SOURCE_UID \
         --create-for-group=$SOURCE_GID \
-        $SOURCE_DIR $TARGET_DIR || true
+        $SOURCE_DIR $TARGET_DIR || rmdir $TARGET_DIR || true
 fi
 
 set -ex
 exec "$@"
 EOF
 
-WORKDIR /root/workspace
+WORKDIR /root
 
 CMD ["bash"]
 ENTRYPOINT ["docker-entrypoint"]
