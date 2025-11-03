@@ -1,0 +1,38 @@
+networks:
+  default:
+    name: vide
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.10.0/24
+
+services:
+  vide:
+    image: moonpath/vide:ubuntu-24.04
+    container_name: vide
+    hostname: linux
+    privileged: false
+    restart: no
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      LC_ALL: ${LANG:-C.UTF-8}
+      LANG: ${LANG:-C.UTF-8}
+      TZ: ${TZ:-Etc/UTC}
+    volumes:
+      - ./.workspace:/workspace
+    ports:
+      - "2222:22/tcp"  
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    deploy:
+      resources:
+        limits:
+          memory: 4g
