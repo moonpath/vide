@@ -33,7 +33,7 @@ RUN git clone https://github.com/LazyVim/starter ~/.config/nvim && \
     mkdir -p ~/.config/nvim/lua/plugins && \
     cat <<EOF > ~/.config/nvim/lua/plugins/mason-tool-installer.lua && \
     nvim --headless "+MasonToolsInstallSync" +qa && \
-    (timeout 15s nvim --headless "+TSUpdate" || true) && \
+    (timeout 15s nvim --headless "untitled" "+startinsert" "+TSUpdate" || true) && \
     nvim --headless "+Lazy! sync" +qa
 
 return {
@@ -51,7 +51,7 @@ return {
 }
 EOF
 
-RUN curl -L https://github.com/jesseduffield/lazygit/releases/download/v0.40.2/lazygit_0.40.2_Linux_x86_64.tar.gz | \
+RUN curl -fsSL https://github.com/jesseduffield/lazygit/releases/download/v0.40.2/lazygit_0.40.2_Linux_x86_64.tar.gz | \
     tar -xz -C /usr/local/bin lazygit
 
 RUN apt-get install -y \
