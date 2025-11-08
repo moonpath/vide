@@ -2,6 +2,8 @@ ARG BASE_IMAGE="ubuntu:24.04"
 # ARG BASE_IMAGE="nvidia/cuda:12.9.1-cudnn-devel-ubuntu24.04"
 FROM $BASE_IMAGE AS base_image
 
+ARG TIMEOUT="15s"
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
@@ -33,7 +35,7 @@ RUN git clone https://github.com/LazyVim/starter ~/.config/nvim && \
     mkdir -p ~/.config/nvim/lua/plugins && \
     cat <<EOF > ~/.config/nvim/lua/plugins/mason-tool-installer.lua && \
     nvim --headless "+MasonToolsInstallSync" +qa && \
-    (timeout 15s nvim --headless "untitled" "+startinsert" "+TSUpdate" || true) && \
+    (timeout $TIMEOUT nvim --headless "untitled" "+startinsert" "+TSUpdate" || true) && \
     nvim --headless "+Lazy! sync" +qa
 
 return {
