@@ -1,19 +1,36 @@
 ARG BASE_IMAGE="ubuntu:24.04"
 # ARG BASE_IMAGE="nvidia/cuda:12.9.1-cudnn-devel-ubuntu24.04"
+
+FROM $BASE_IMAGE AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    build-essential \
+    cmake \
+    ninja-build
+
+RUN git clone https://github.com/neovim/neovim.git /tmp/neovim && \
+    cd /tmp/neovim && \
+    make CMAKE_BUILD_TYPE=Release && \
+    make install
+
 FROM $BASE_IMAGE AS base_image
 
 ARG TIMEOUT="15s"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+COPY --from=builder /usr/local/bin/nvim /usr/local/bin/nvim
+COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
+
 RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
     curl \
     git \
-    build-essential \
-    cmake \
-    ninja-build \
     unzip \
     luarocks \
     nodejs \
@@ -22,11 +39,6 @@ RUN apt-get update && \
     python3-pip \
     python3-venv \
     bindfs
-
-RUN git clone https://github.com/neovim/neovim.git /tmp/neovim && \
-    cd /tmp/neovim && \
-    make CMAKE_BUILD_TYPE=Release && \
-    make install
 
 RUN git clone https://github.com/LazyVim/starter ~/.config/nvim && \
     mkdir -p ~/.config/nvim/lua/config && \
